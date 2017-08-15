@@ -1,3 +1,5 @@
+import Joi from 'joi'
+
 class Movie {
   constructor(title='', releaseDate='', duration=0, genre='', synopsis='') {
     this.title = title;
@@ -11,12 +13,24 @@ class Movie {
     return ['title', 'releaseDate', 'duration', 'genre', 'synopsis'];
   }
 
-  toJSON() {
-    const json = {};
-    const publicProps = Movie.publicProps();
+  static publicSchema() {
+    const schema = Joi.object().keys({
+      title: Joi.string(),
+      releaseDate: Joi.date(),
+      duration: Joi.number(),
+      genre: Joi.string(),
+      synopsis: Joi.string()
+    });
 
-    for (let i = 0; i < publicProps.length; i++) {
-      json[publicProps[i]] = this[publicProps[i]];
+    return schema;
+  }
+
+  toPublicJSON() {
+    const json = {};
+    const keys = Movie.publicSchema().keys();
+
+    for (let i = 0; i < keys.length; i++) {
+      json[keys[i]] = this[keys[i]];
     }
     return json;
   }
